@@ -14,7 +14,86 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      clients: {
+        Row: {
+          business_type: string | null
+          created_at: string
+          email: string
+          id: string
+          last_contacted: string | null
+          name: string
+          notes: string | null
+          status: string
+          tags: string[]
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          business_type?: string | null
+          created_at?: string
+          email: string
+          id?: string
+          last_contacted?: string | null
+          name: string
+          notes?: string | null
+          status?: string
+          tags?: string[]
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          business_type?: string | null
+          created_at?: string
+          email?: string
+          id?: string
+          last_contacted?: string | null
+          name?: string
+          notes?: string | null
+          status?: string
+          tags?: string[]
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      outreach_logs: {
+        Row: {
+          body: string
+          client_id: string
+          created_at: string
+          id: string
+          sent: boolean
+          subject: string
+          user_id: string
+        }
+        Insert: {
+          body: string
+          client_id: string
+          created_at?: string
+          id?: string
+          sent?: boolean
+          subject: string
+          user_id: string
+        }
+        Update: {
+          body?: string
+          client_id?: string
+          created_at?: string
+          id?: string
+          sent?: boolean
+          subject?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "outreach_logs_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "clients"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
