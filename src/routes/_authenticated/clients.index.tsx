@@ -17,7 +17,7 @@ import type { Tables } from "@/integrations/supabase/types";
 
 type Client = Tables<"clients">;
 
-export const Route = createFileRoute("/_authenticated/clients")({
+export const Route = createFileRoute("/_authenticated/clients/")({
   component: ClientsPage,
 });
 
