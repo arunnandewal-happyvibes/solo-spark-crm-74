@@ -64,17 +64,44 @@ function ClientDetailPage() {
     if (!client) return;
     setGenerating(true);
     try {
-      const result = await generate({
-        data: {
+      const res = await fetch("https://hook.us2.make.com/r3q0gxo2mau0jzysrtilpqipx77ws8lz", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
           name: client.name,
-          email: client.email,
-          businessType: client.business_type,
+          business_type: client.business_type,
           tags: client.tags,
           notes: client.notes,
-        },
+        }),
       });
-      setSubject(result.subject);
-      setBody(result.body);
+      if (!res.ok) throw new Error(`Webhook failed (${res.status})`);
+      const raw = await res.text();
+
+      let subjectOut = "";
+      let bodyOut = "";
+      try {
+        const json = JSON.parse(raw);
+        subjectOut = json.subject ?? json.SUBJECT ?? "";
+        bodyOut = json.body ?? json.BODY ?? "";
+        if (!subjectOut && !bodyOut && typeof json === "string") {
+          parsePlain(json);
+        }
+        function parsePlain(text: string) {
+          const sm = text.match(/SUBJECT:\s*(.*?)(?:\r?\n|$)/i);
+          const bm = text.match(/BODY:\s*([\s\S]*)/i);
+          if (sm) subjectOut = sm[1].trim();
+          if (bm) bodyOut = bm[1].trim();
+        }
+      } catch {
+        const sm = raw.match(/SUBJECT:\s*(.*?)(?:\r?\n|$)/i);
+        const bm = raw.match(/BODY:\s*([\s\S]*)/i);
+        subjectOut = sm ? sm[1].trim() : "";
+        bodyOut = bm ? bm[1].trim() : raw.trim();
+      }
+
+      if (!subjectOut && !bodyOut) throw new Error("Empty AI response");
+      setSubject(subjectOut);
+      setBody(bodyOut);
       toast.success("Email drafted");
     } catch (err: any) {
       toast.error(err.message || "Failed to generate email");
