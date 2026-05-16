@@ -1,7 +1,7 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
-import { useServerFn } from "@tanstack/react-start";
+
 import { ArrowLeft, Sparkles, Send, Pencil, Trash2, Mail, History } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Card } from "@/components/ui/card";
@@ -14,7 +14,7 @@ import { Separator } from "@/components/ui/separator";
 import { ClientFormDialog } from "@/components/clients/client-form-dialog";
 import { DeleteClientDialog } from "@/components/clients/delete-client-dialog";
 import { needsFollowUp, formatRelative } from "@/lib/follow-up";
-import { generateOutreachEmail } from "@/lib/ai-email.functions";
+
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/_authenticated/clients/$clientId")({
@@ -33,7 +33,7 @@ function ClientDetailPage() {
   const [generating, setGenerating] = useState(false);
   const [sending, setSending] = useState(false);
 
-  const generate = useServerFn(generateOutreachEmail);
+  
 
   const { data: client, isLoading } = useQuery({
     queryKey: ["client", clientId],
